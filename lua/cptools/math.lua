@@ -1,23 +1,5 @@
 local M = {}
 
-function M.isqrt(n)
-	if n < 0 then
-		error("cptools.math.sqrt: negative input")
-	end
-
-	local x = math.floor(math.sqrt(n))
-
-	while (x + 1) * (x + 1) <= n do
-		x = x + 1
-	end
-	while x * x > n do
-		x = x - 1
-	end
-
-	return x
-end
-
-
 local ffi = require("ffi")
 
 ffi.cdef[[
@@ -33,7 +15,7 @@ ffi.cdef[[
 	void __gmpz_clear(mpz_t x);
 	void __gmpz_set_ui(mpz_t rop, unsigned long int op);
 	void __gmpz_set_str(mpz_t rop, const char *str, int base);
-	void __gmpz_get_str(char *str, int base, const mpz_t op);
+	char* __gmpz_get_str(char *str, int base, const mpz_t op);
 
 	void __gmpz_add(mpz_t rop, const mpz_t op1, const mpz_t op2);
 	void __gmpz_sub(mpz_t rop, const mpz_t op1, const mpz_t op2);
@@ -44,6 +26,8 @@ ffi.cdef[[
 	void __gmpz_sqrt(mpz_t rop, const mpz_t op);
 
 	void __gmpz_powm(mpz_t rop, const mpz_t base, const mpz_t exp, const mpz_t mod);
+
+	void free(void *ptr);
 ]]
 local gmp = ffi.load("gmp")
 
@@ -59,6 +43,26 @@ local function new_mpz(val)
 		gmp.__gmpz_set_str(x, val, 10)
 	end
 	return x
+end
+
+local function mpz_to_string(x)
+	local cstr = gmp.__gmpz_get_str(nil, 10, x)
+	local str = ffi.string(cstr)
+	ffi.C.free(cstr)
+	return str
+end
+
+function M.isqrt(n_str)
+	local n = new_mpz(n_str)
+
+	if gmp.__gmpz_cmp(n, new_mpz(0)) < 0 then
+		error("cptools.math.isqrt: negative input")
+	end
+
+	local root = new_mpz(0)
+	gmp.__gmpz_sqrt(root, n)
+
+	return mpz_to_string(root)
 end
 
 function M.is_prime(n_str)
