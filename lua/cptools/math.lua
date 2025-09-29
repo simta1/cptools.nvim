@@ -113,30 +113,4 @@ function M.is_prime(n_str)
 	return true
 end
 
-function M.is_prime_sqrt(n_str)
-    local n = new_mpz(n_str)
-
-    if gmp.__gmpz_cmp(n, new_mpz(2)) < 0 then return false end
-    if gmp.__gmpz_cmp(n, new_mpz(2)) == 0 then return true end
-
-    local rem = new_mpz(0)
-    gmp.__gmpz_mod(rem, n, new_mpz(2))
-    if gmp.__gmpz_cmp(rem, new_mpz(0)) == 0 then return false end
-
-    -- limit = floor(sqrt(n))
-    local limit = new_mpz(0)
-    gmp.__gmpz_sqrt(limit, n)
-
-    local i = new_mpz(3)
-    while gmp.__gmpz_cmp(i, limit) <= 0 do
-        gmp.__gmpz_mod(rem, n, i)
-        if gmp.__gmpz_cmp(rem, new_mpz(0)) == 0 then
-            return false
-        end
-        gmp.__gmpz_add(i, i, new_mpz(2))
-    end
-
-    return true
-end
-
 return M
