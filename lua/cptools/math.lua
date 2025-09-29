@@ -50,6 +50,9 @@ local gmp = ffi.load("gmp")
 local function new_mpz(val)
 	local x = ffi.new("mpz_t")
 	gmp.__gmpz_init(x)
+
+	ffi.gc(x, gmp.__gmpz_clear)
+
 	if type(val) == "number" then
 		gmp.__gmpz_set_ui(x, val)
 	elseif type(val) == "string" then
