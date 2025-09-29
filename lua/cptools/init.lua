@@ -4,18 +4,21 @@ M.config = {}
 function M.setup(opts)
 	opts = opts or {}
 
-	local modules = {
-		"primality_test",
-		-- "prime_factorization",
-		-- "divisor_count",
-		-- "prime_count",
-		-- "factorial",
-		-- "nCr",
-		-- "nPr",
-		-- "modinv",
-		-- "crt",
-		-- "primitive_root",
-	}
+	local dir = debug.getinfo(1, "S").source:sub(2):match("(.*/)")
+	dir = dir .. "tools"
+
+	local modules = {}
+    local fs = vim.loop.fs_scandir(dir)
+    if not fs then return modules end
+
+    while true do
+        local name, t = vim.loop.fs_scandir_next(fs)
+        if not name then break end
+        if t == "file" and name:match("%.lua$") then
+            local modname = name:gsub("%.lua$", "")
+            table.insert(modules, modname)
+        end
+    end
 
 	local all = {}
 	for _, m in ipairs(modules) do

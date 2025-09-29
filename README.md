@@ -1,5 +1,5 @@
 # Cptools.nvim
-![Neovim](https://img.shields.io/badge/Neovim-0.7+-%2357A143.svg?style=for-the-badge&logo=neovim)   
+![Neovim](https://img.shields.io/badge/Neovim-0.7+-%2357A143.svg?logo=neovim)   
 
 <!-- demo -->
 
@@ -26,4 +26,4 @@ return {
 ```
 
 ## Usage
-Use `:Cptools` to open the menu and pick a tool   
+Use `:Cptools` to open the menu   
