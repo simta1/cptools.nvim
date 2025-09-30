@@ -1,15 +1,17 @@
-return function(show)
-	vim.ui.input({ prompt = "Enter number: " }, function(input)
+return function(label)
+	vim.ui.input({ prompt = label .. ": " }, function(input)
 		if not input then return end
 
 		local util = require("cptools.util")
+		local msg
+
 		if not util.is_u64_integer(input) then
-			show(input .. " is not a valid unsigned 64-bit integer")
-			return
+			msg = input .. " is not a valid unsigned 64-bit integer"
+		else
+			local res = require("cptools.math").is_prime(input)
+			msg = res and (input .. " is prime") or (input .. " is not prime")
 		end
 
-		local res = require("cptools.math").is_prime(input)
-		local msg = res and (input .. " is prime") or (input .. " is not prime")
-		show(msg)
+		util.floating_msg(label, msg)
 	end)
 end

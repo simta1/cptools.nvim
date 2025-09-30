@@ -8,17 +8,17 @@ function M.setup(opts)
 	dir = dir .. "tools"
 
 	local modules = {}
-    local fs = vim.loop.fs_scandir(dir)
-    if not fs then return modules end
+	local fs = vim.loop.fs_scandir(dir)
+	if not fs then return modules end
 
-    while true do
-        local name, t = vim.loop.fs_scandir_next(fs)
-        if not name then break end
-        if t == "file" and name:match("%.lua$") then
-            local modname = name:gsub("%.lua$", "")
-            table.insert(modules, modname)
-        end
-    end
+	while true do
+		local name, t = vim.loop.fs_scandir_next(fs)
+		if not name then break end
+		if t == "file" and name:match("%.lua$") then
+			local modname = name:gsub("%.lua$", "")
+			table.insert(modules, modname)
+		end
+	end
 
 	local all = {}
 	for _, m in ipairs(modules) do
@@ -69,12 +69,7 @@ function M.setup(opts)
 				if t.label == choice then
 					local util = require("cptools.util")
 					local ok, _ = pcall(function()
-						t.run(function(msg)
-							util.floating_msg(msg, {
-								border = "rounded",
-								title = choice,
-							})
-						end)
+						t.run(choice)
 					end)
 					if not ok then
 						vim.notify("cptools.nvim: tool '" .. choice .. "' failed to run", vim.log.levels.ERROR)

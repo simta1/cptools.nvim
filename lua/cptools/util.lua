@@ -1,12 +1,6 @@
 local U = {}
 
-function U.floating_msg(lines, opts)
-	opts = vim.tbl_extend("force", {
-        width_ratio = 0.8,
-        height_ratio = 0.5,
-        border = "rounded",
-    }, opts or {})
-
+function U.floating_msg(title, lines)
 	if type(lines) == "string" then
 		lines = { lines }
 	end
@@ -17,8 +11,8 @@ function U.floating_msg(lines, opts)
 	vim.api.nvim_set_option_value("modifiable", false, { buf = buf })
 	vim.api.nvim_set_option_value("bufhidden", "wipe", { buf = buf })
 
-	local width = math.floor(vim.o.columns * opts.width_ratio)
-	local height = math.floor(vim.o.lines * opts.height_ratio)
+	local width = math.floor(vim.o.columns * 0.8)
+	local height = math.floor(vim.o.lines * 0.5)
 	local row = math.floor((vim.o.lines - height) / 2)
 	local col = math.floor((vim.o.columns - width) / 2)
 
@@ -29,8 +23,8 @@ function U.floating_msg(lines, opts)
 		row = row,
 		col = col,
 		style = "minimal",
-		border = opts.border,
-		title = opts.title or nil,
+		border = "rounded",
+		title = title,
 		title_pos = "center",
 	}
 

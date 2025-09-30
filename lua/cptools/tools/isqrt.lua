@@ -1,15 +1,17 @@
-return function(show)
-	vim.ui.input({ prompt = "Enter number: " }, function(input)
+return function(label)
+	vim.ui.input({ prompt = label .. ": " }, function(input)
 		if not input then return end
 
 		local util = require("cptools.util")
+		local msg
+
 		if not util.is_integer(input) then
-			show(input .. " is not integer")
-			return
+			msg = input .. " is not a integer"
+		else
+			local res = require("cptools.math").isqrt(input)
+			msg = "isqrt(" .. input .. ") = " .. res
 		end
 
-		local res = require("cptools.math").isqrt(input)
-		local msg = "isqrt(" .. input .. ") = " .. res
-		show(msg)
+		util.floating_msg(label, msg)
 	end)
 end
