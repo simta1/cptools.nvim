@@ -2,8 +2,8 @@ local U = {}
 
 function U.floating_msg(lines, opts)
 	opts = vim.tbl_extend("force", {
-        width_ratio = 0.5,
-        height_ratio = 0.3,
+        width_ratio = 0.8,
+        height_ratio = 0.5,
         border = "rounded",
     }, opts or {})
 
@@ -43,6 +43,30 @@ function U.floating_msg(lines, opts)
 	end, { buffer = buf, nowait = true, noremap = true, silent = true })
 
 	return win
+end
+
+function U.is_integer(s)
+	return type(s) == "string" and s:match("^[-]?%d+$") ~= nil
+end
+
+function U.is_u64_integer(s)
+	if not U.is_integer(s) then
+		return false
+	end
+
+	if s:sub(1,1) == "-" then
+		return false
+	end
+
+	local max_u64 = "18446744073709551615" -- 2^64 - 1
+
+	if #s < #max_u64 then
+		return true
+	elseif #s > #max_u64 then
+		return false
+	else
+		return s <= max_u64
+	end
 end
 
 return U
