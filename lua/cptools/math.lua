@@ -117,4 +117,26 @@ function M.is_prime(n_str)
 	return true
 end
 
+local hcn = require("cptools.data.highly_composite_numbers")
+function M.highly_composite_leq(n_str)
+	local n = new_mpz(n_str)
+
+	local lo, hi = 1, #hcn + 1
+	while lo + 1 < hi do
+		local mid = math.floor((lo + hi) / 2)
+
+		local cur = new_mpz(hcn[mid][1])
+		if gmp.__gmpz_cmp(cur, n) <= 0 then
+			lo = mid
+		else
+			hi = mid - 1
+		end
+	end
+	return {
+		value = hcn[lo][1],
+		divisors = hcn[lo][2],
+		factorization = hcn[lo][3],
+	}
+end
+
 return M

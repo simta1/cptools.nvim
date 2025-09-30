@@ -45,7 +45,11 @@ function M.setup(opts)
 			end
 		end
 	else
-		for name, fn in pairs(all) do
+		local names = vim.tbl_keys(all)
+		table.sort(names)
+
+		for _, name in ipairs(names) do
+			local fn = all[name]
 			table.insert(M.config.tools, { label = name, run = fn })
 		end
 	end

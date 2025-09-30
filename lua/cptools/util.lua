@@ -2,7 +2,7 @@ local U = {}
 
 function U.floating_msg(title, lines)
 	if type(lines) == "string" then
-		lines = { lines }
+		lines = vim.split(lines, "\n")
 	end
 
 	local buf = vim.api.nvim_create_buf(false, true)
@@ -61,6 +61,13 @@ function U.is_u64_integer(s)
 	else
 		return s <= max_u64
 	end
+end
+
+function U.is_u64_positive(s)
+	if not U.is_u64_integer(s) then
+		return false
+	end
+	return s ~= "0"
 end
 
 return U
