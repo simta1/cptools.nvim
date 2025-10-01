@@ -30,6 +30,9 @@ function U.floating_msg(title, lines)
 
 	local win = vim.api.nvim_open_win(buf, true, win_opts)
 
+	local number = vim.api.nvim_get_option_value("number", { scope = "global" })
+	vim.api.nvim_set_option_value("number", number, { win = win })
+
 	vim.keymap.set("n", "q", function()
 		if vim.api.nvim_win_is_valid(win) then
 			vim.api.nvim_win_close(win, true)
