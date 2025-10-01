@@ -1,17 +1,15 @@
 # Cptools.nvim
-
-<!-- demo -->
+https://github.com/user-attachments/assets/6ea9df84-c21d-4ac7-8089-b85673842827
 
 ## Features
-- **Primality test:** Check if a 64-bit unsigned integer is prime
-- **Integer square root:** Exact `floor(sqrt(N))` for big integers.
+- **Divisors:** Generate and list all divisors of a 64-bit unsigned integer
 - **Highly composite number ≤ N:** Find the largest highly composite number ≤ N (64-bit unsigned), with divisor count and prime factorization
+- **Integer square root:** Exact `floor(sqrt(N))` for big integers.
+- **Primality test:** Check if a 64-bit unsigned integer is prime
 - **Prime factorization:** Factorize a 64-bit unsigned integer into primes
-- **All divisors:** Generate and list all divisors of a 64-bit unsigned integer
 
 ## Planned Features (not implemented yet)
-- **Divisor sum**
-- **Prime count up to N**
+- **Count prime <= N**
 - **Combinatorics**
 - **Modular Arithmetic**
 - **Primitive root**
