@@ -6,13 +6,11 @@
 - **Primality test:** Check if a 64-bit unsigned integer is prime
 - **Integer square root:** Exact `floor(sqrt(N))` for big integers.
 - **Highly composite number ≤ N:** Find the largest highly composite number ≤ N (64-bit unsigned), with divisor count and prime factorization
+- **Prime factorization:** Factorize a 64-bit unsigned integer into primes
 
 > **Project status:** Early in development. Interfaces and behavior may change, and performance/edge cases are still being tuned. Feedback and issues are very welcome!
 
-<!-- - **Factorization:** Factorize a 64-bit unsigned integer into primes -->
-
 ## Planned Features (not implemented yet)
-- **Factorization**
 - **Divisors list**
 - **Divisor count / sum**
 - **Prime count up to N**
@@ -20,6 +18,7 @@
 - **Modular Arithmetic**
 - **Primitive root**
 - **CRT solver**
+- **Base conversion**
 
 ## Requirements
 - [Neovim](https://neovim.io/) 0.7+   
@@ -47,7 +46,9 @@ Install the plugin with your preferred plugin manager, and add `require("cptools
 	end,
 }
 ```
-By default, all available [tools](/lua/cptools/tools/*.lua) are registered. If you want to customize which tools appear in the :Cptools menu, you can explicitly list them:
+By default, all available [tools](/lua/cptools/tools/) are automatically registered, and they appear in the `:Cptools` menu in **alphabetical order**.   
+If you want to customize which tools appear (and in which order), you can explicitly list them.   
+When you define `tools` in the config, the menu will show them **in the same order you specify**:   
 ```lua
 {
 	"simta1/cptools.nvim",
@@ -57,7 +58,8 @@ By default, all available [tools](/lua/cptools/tools/*.lua) are registered. If y
 				-- 'use' is the filename under 'lua/cptools/tools/'
 				-- 'as' is the display name shown in the :Cptools menu
 				{ use = "primality_test", as = "prime check" },
-				{ use = "isqrt",  as = "isqrt" },
+				{ use = "prime_factorization", as = "prime factorization" },
+				{ use = "isqrt", as = "isqrt" },
 				{ use = "highly_composite_number", as = "highly composite number" },
 			}
 		})

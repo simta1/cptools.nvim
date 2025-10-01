@@ -16,14 +16,17 @@ ffi.cdef[[
 	void __gmpz_set_ui(mpz_t rop, unsigned long int op);
 	void __gmpz_set_str(mpz_t rop, const char *str, int base);
 	char* __gmpz_get_str(char *str, int base, const mpz_t op);
+	void __gmpz_set(mpz_t rop, const mpz_t op);
 
 	void __gmpz_add(mpz_t rop, const mpz_t op1, const mpz_t op2);
 	void __gmpz_sub(mpz_t rop, const mpz_t op1, const mpz_t op2);
 	void __gmpz_mul(mpz_t rop, const mpz_t op1, const mpz_t op2);
 	void __gmpz_mod(mpz_t r, const mpz_t n, const mpz_t d);
+	void __gmpz_tdiv_q(mpz_t q, const mpz_t n, const mpz_t d);
 	void __gmpz_tdiv_q_2exp(mpz_t q, const mpz_t n, unsigned long int b);
 	int  __gmpz_cmp(const mpz_t op1, const mpz_t op2);
 	void __gmpz_sqrt(mpz_t rop, const mpz_t op);
+	void __gmpz_gcd(mpz_t rop, const mpz_t op1, const mpz_t op2);
 
 	void __gmpz_powm(mpz_t rop, const mpz_t base, const mpz_t exp, const mpz_t mod);
 
@@ -137,6 +140,101 @@ function M.highly_composite_leq(n_str)
 		divisors = hcn[lo][2],
 		factorization = hcn[lo][3],
 	}
+end
+
+local function mpz_abs_sub(a, b)
+	local t = new_mpz(0)
+	gmp.__gmpz_sub(t, a, b)
+	if gmp.__gmpz_cmp(t, new_mpz(0)) < 0 then
+		gmp.__gmpz_sub(t, b, a)
+	end
+	return t
+end
+
+local function random_mpz_below(n)
+	-- NOTE: I avoid using __gmpz_urandomm with a GMP randstate because managing
+	-- the randstate safely via LuaJIT FFI is tricky and error-prone (layout/GC issues).
+	-- Instead, I synthesize a big random mpz using math.random 31-bit chunks and
+	-- reduce modulo n. This is good enough for Pollard–Rho’s randomness needs.
+	local acc = new_mpz(0)
+	local base = new_mpz(2147483648) -- 2^31
+
+	for _ = 1, 4 do
+		local chunk = new_mpz(math.random(0, 2147483647))
+		gmp.__gmpz_mul(acc, acc, base)
+		gmp.__gmpz_add(acc, acc, chunk)
+	end
+	gmp.__gmpz_mod(acc, acc, n)
+	return acc
+end
+
+local function f(x, c, n)
+	local xx = new_mpz(0)
+	gmp.__gmpz_mul(xx, x, x)
+	gmp.__gmpz_add(xx, xx, c)
+	gmp.__gmpz_mod(xx, xx, n)
+	return xx
+end
+
+local function pollard_rho(n)
+	local rem = new_mpz(0)
+	local two = new_mpz(2)
+	gmp.__gmpz_mod(rem, n, two)
+	if gmp.__gmpz_cmp(rem, new_mpz(0)) == 0 then
+		return two
+	end
+
+	if M.is_prime(mpz_to_string(n)) then
+		return new_mpz(mpz_to_string(n))
+	end
+
+	local g = new_mpz(0)
+
+	repeat
+		local nm2 = new_mpz(0)
+		gmp.__gmpz_sub(nm2, n, new_mpz(2))
+		local a = random_mpz_below(nm2)
+		gmp.__gmpz_add(a, a, new_mpz(2)) -- 2 <= a <= n-1
+		local b = new_mpz(0)
+		gmp.__gmpz_set(b, a)
+		local c = new_mpz(tostring(math.random(1, 10)))
+
+		repeat
+			a = f(a, c, n)
+			b = f(f(b, c, n), c, n)
+			local diff = mpz_abs_sub(a, b)
+			gmp.__gmpz_gcd(g, diff, n)
+		until gmp.__gmpz_cmp(g, new_mpz(1)) ~= 0
+	until gmp.__gmpz_cmp(g, n) ~= 0
+
+	return pollard_rho(g)
+end
+
+function M.factorize(n_str)
+	local n = new_mpz(n_str)
+	local factors = {}
+
+	if gmp.__gmpz_cmp(n, new_mpz(1)) == 0 then
+		table.insert(factors, { "1", 1 })
+	else
+		while gmp.__gmpz_cmp(n, new_mpz(1)) > 0 do
+			local prime = pollard_rho(n)
+			local cnt = 0
+
+			local rem = new_mpz(0)
+			gmp.__gmpz_mod(rem, n, prime)
+			while gmp.__gmpz_cmp(rem, new_mpz(0)) == 0 do
+				gmp.__gmpz_tdiv_q(n, n, prime)
+				cnt = cnt + 1
+
+				gmp.__gmpz_mod(rem, n, prime)
+			end
+
+			table.insert(factors, { mpz_to_string(prime), cnt })
+		end
+	end
+	table.sort(factors, function(a, b) return tonumber(a[1]) < tonumber(b[1]) end)
+	return factors
 end
 
 return M
