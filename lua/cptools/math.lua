@@ -1,6 +1,7 @@
 local M = {}
 
 local ffi = require("ffi")
+local util = require("cptools.util")
 
 ffi.cdef[[
 	typedef struct __mpz_struct {
@@ -233,8 +234,36 @@ function M.factorize(n_str)
 			table.insert(factors, { mpz_to_string(prime), cnt })
 		end
 	end
-	table.sort(factors, function(a, b) return tonumber(a[1]) < tonumber(b[1]) end)
+	table.sort(factors, function(a, b) return util.string_lt(a[1], b[1]) end)
 	return factors
+end
+
+function M.get_all_divisors(n_str)
+	local facs = M.factorize(n_str)
+
+	local res = { "1" }
+	for _, pe in ipairs(facs) do
+		local p, e = pe[1], pe[2]
+		local sz = #res
+		local curP = new_mpz(p)
+
+		for _ = 1, e do
+			local new_vals = {}
+			for i = 1, sz do
+				local val = new_mpz(res[i])
+				gmp.__gmpz_mul(val, val, curP)
+				table.insert(new_vals, mpz_to_string(val))
+			end
+			for _, v in ipairs(new_vals) do
+				table.insert(res, v)
+			end
+			gmp.__gmpz_mul(curP, curP, new_mpz(p))
+		end
+	end
+
+	table.sort(res, util.string_lt)
+
+	return res
 end
 
 return M

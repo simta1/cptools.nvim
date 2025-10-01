@@ -70,4 +70,12 @@ function U.is_u64_positive(s)
 	return s ~= "0"
 end
 
+function U.string_lt(a, b)
+	if #a ~= #b then
+		return #a < #b
+	else
+		return a < b
+	end
+end
+
 return U

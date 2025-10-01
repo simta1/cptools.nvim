@@ -7,12 +7,10 @@
 - **Integer square root:** Exact `floor(sqrt(N))` for big integers.
 - **Highly composite number ≤ N:** Find the largest highly composite number ≤ N (64-bit unsigned), with divisor count and prime factorization
 - **Prime factorization:** Factorize a 64-bit unsigned integer into primes
-
-> **Project status:** Early in development. Interfaces and behavior may change, and performance/edge cases are still being tuned. Feedback and issues are very welcome!
+- **All divisors:** Generate and list all divisors of a 64-bit unsigned integer
 
 ## Planned Features (not implemented yet)
-- **Divisors list**
-- **Divisor count / sum**
+- **Divisor sum**
 - **Prime count up to N**
 - **Combinatorics**
 - **Modular Arithmetic**
@@ -57,10 +55,11 @@ When you define `tools` in the config, the menu will show them **in the same ord
 			tools = {
 				-- 'use' is the filename under 'lua/cptools/tools/'
 				-- 'as' is the display name shown in the :Cptools menu
+				{ use = "divisors", as = "divisors" },
+				{ use = "highly_composite_number", as = "highly composite number" },
+				{ use = "isqrt", as = "isqrt" },
 				{ use = "primality_test", as = "prime check" },
 				{ use = "prime_factorization", as = "prime factorization" },
-				{ use = "isqrt", as = "isqrt" },
-				{ use = "highly_composite_number", as = "highly composite number" },
 			}
 		})
 
