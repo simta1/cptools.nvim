@@ -2,15 +2,24 @@
 
 <!-- demo -->
 
-<!-- ## Features -->
-<!-- - Primality test -->
-<!-- - Factorization -->
-<!-- - Divisor count / sum -->
-<!-- - Prime count up to N -->
-<!-- - Combinatorics -->
-<!-- - Modular Arithmetic -->
-<!-- - Primitive root -->
-<!-- - CRT solver -->
+## Features
+- **Primality test:** Check if a 64-bit unsigned integer is prime
+- **Integer square root:** Exact `floor(sqrt(N))` for big integers.
+- **Highly composite number ≤ N:** Find the largest highly composite number ≤ N (64-bit unsigned), with divisor count and prime factorization
+
+> **Project status:** Early in development. Interfaces and behavior may change, and performance/edge cases are still being tuned. Feedback and issues are very welcome!
+
+<!-- - **Factorization:** Factorize a 64-bit unsigned integer into primes -->
+
+## Planned Features (not implemented yet)
+- **Factorization**
+- **Divisors list**
+- **Divisor count / sum**
+- **Prime count up to N**
+- **Combinatorics**
+- **Modular Arithmetic**
+- **Primitive root**
+- **CRT solver**
 
 ## Requirements
 - [Neovim](https://neovim.io/) 0.7+   
@@ -25,15 +34,34 @@ sudo pacman -S gmp
 sudo apt install libgmp-dev
 ```
 
-## Installation
-Install the plugin with your plugin manager of choice, then call `require("cptools").setup()` in your config.
+## Installation ([lazy.nvim](https://github.com/folke/lazy.nvim))
+Install the plugin with your preferred plugin manager, and add `require("cptools").setup()` to your Neovim configuration.
 
-### [lazy.nvim](https://github.com/folke/lazy.nvim)
+<!-- ### [lazy.nvim](https://github.com/folke/lazy.nvim) -->
 ```lua
 {
 	"simta1/cptools.nvim",
 	config = function()
 		require("cptools").setup()
+		vim.keymap.set("n", "<leader>cp", "<cmd>Cptools<cr>", { desc = "Open CP Tools" })
+	end,
+}
+```
+By default, all available [tools](/lua/cptools/tools/*.lua) are registered. If you want to customize which tools appear in the :Cptools menu, you can explicitly list them:
+```lua
+{
+	"simta1/cptools.nvim",
+	config = function()
+		require("cptools").setup({
+			tools = {
+				-- 'use' is the filename under 'lua/cptools/tools/'
+				-- 'as' is the display name shown in the :Cptools menu
+				{ use = "primality_test", as = "prime check" },
+				{ use = "isqrt",  as = "isqrt" },
+				{ use = "highly_composite_number", as = "highly composite number" },
+			}
+		})
+
 		vim.keymap.set("n", "<leader>cp", "<cmd>Cptools<cr>", { desc = "Open CP Tools" })
 	end,
 }
