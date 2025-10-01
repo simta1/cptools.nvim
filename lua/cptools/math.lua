@@ -215,9 +215,7 @@ function M.factorize(n_str)
 	local n = new_mpz(n_str)
 	local factors = {}
 
-	if gmp.__gmpz_cmp(n, new_mpz(1)) == 0 then
-		table.insert(factors, { "1", 1 })
-	else
+	if gmp.__gmpz_cmp(n, new_mpz(1)) > 0 then
 		while gmp.__gmpz_cmp(n, new_mpz(1)) > 0 do
 			local prime = pollard_rho(n)
 			local cnt = 0

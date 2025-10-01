@@ -10,17 +10,20 @@ return function(label)
 		else
 			local res = require("cptools.math").factorize(input)
 
-			local parts = {}
-			for _, pe in ipairs(res) do
-				local p, e = pe[1], pe[2]
-				if e == 1 then
-					table.insert(parts, p)
-				else
-					table.insert(parts, p .. "^" .. e)
+			if #res == 0 then
+				msg = "1 has no prime factors"
+			else
+				local parts = {}
+				for _, pe in ipairs(res) do
+					local p, e = pe[1], pe[2]
+					if e == 1 then
+						table.insert(parts, p)
+					else
+						table.insert(parts, p .. "^" .. e)
+					end
 				end
+				msg = input .. " = " .. table.concat(parts, " * ")
 			end
-
-			msg = input .. " = " .. table.concat(parts, " * ")
 		end
 
 		util.floating_msg(label, msg)
