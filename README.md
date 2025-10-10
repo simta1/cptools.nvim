@@ -7,6 +7,7 @@ https://github.com/user-attachments/assets/6ea9df84-c21d-4ac7-8089-b85673842827
 - **Integer square root:** Exact `floor(sqrt(N))` for big integers.
 - **Primality test:** Check if a 64-bit unsigned integer is prime
 - **Prime factorization:** Factorize a 64-bit unsigned integer into primes
+- **Modular Inverse:** Compute the modular inverse of a 64-bit unsigned integer $N$ modulo $M$, i.e., find $x$ such that $N \times x \equiv 1 \pmod{M}$
 
 ## Planned Features (not implemented yet)
 - **Count prime <= N**
