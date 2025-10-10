@@ -264,4 +264,52 @@ function M.get_all_divisors(n_str)
 	return res
 end
 
+local function extended_gcd(a_str, b_str)
+	local function _egcd(a, b)
+		local zero = new_mpz(0)
+		if gmp.__gmpz_cmp(b, zero) == 0 then
+			return new_mpz(1), new_mpz(0), new_mpz(mpz_to_string(a))
+		end
+
+		local q = new_mpz(0)
+		local r = new_mpz(0)
+		gmp.__gmpz_tdiv_q(q, a, b)
+		gmp.__gmpz_mod(r, a, b)
+
+		local x1, y1, g = _egcd(b, r)
+
+		local x = new_mpz(mpz_to_string(y1))
+		local qy1 = new_mpz(0)
+		gmp.__gmpz_mul(qy1, q, y1)
+		local y = new_mpz(0)
+		gmp.__gmpz_sub(y, x1, qy1)
+
+		return x, y, g
+	end
+
+	local a = new_mpz(a_str)
+	local b = new_mpz(b_str)
+
+	local x, y, g = _egcd(a, b)
+	return mpz_to_string(x), mpz_to_string(y), mpz_to_string(g)
+end
+
+function M.mod_inverse(a_str, mod_str)
+	local x, _, g = extended_gcd(a_str, mod_str)
+
+	if g ~= "1" then
+		return nil
+	end
+
+	local m = new_mpz(mod_str)
+	local x_mpz = new_mpz(x)
+	local res = new_mpz(0)
+
+	gmp.__gmpz_mod(res, x_mpz, m)
+	if gmp.__gmpz_cmp(res, new_mpz(0)) < 0 then
+		gmp.__gmpz_add(res, res, m)
+	end
+	return mpz_to_string(res)
+end
+
 return M
