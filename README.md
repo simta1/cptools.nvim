@@ -11,6 +11,7 @@ https://github.com/user-attachments/assets/6ea9df84-c21d-4ac7-8089-b85673842827
 
 ## Planned Features (not implemented yet)
 - **Count prime <= N**
+- **Prime Gap**
 - **Combinatorics**
 - **Modular Arithmetic**
 - **Primitive root**
