@@ -7,6 +7,8 @@ return function(label)
 
 		if not util.is_integer(input) then
 			msg = input .. " is not a integer"
+		elseif input:sub(1, 1) == "-" then
+			msg = input .. " is not a non-negative integer"
 		else
 			local res = require("cptools.math").isqrt(input)
 			msg = "isqrt(" .. input .. ") = " .. res
