@@ -4,6 +4,8 @@ M.config = {}
 function M.setup(opts)
 	opts = opts or {}
 
+	local util = require("cptools.util")
+
 	local dir = debug.getinfo(1, "S").source:sub(2):match("(.*/)")
 	dir = dir .. "tools"
 
@@ -55,6 +57,12 @@ function M.setup(opts)
 	end
 
 	vim.api.nvim_create_user_command("Cptools", function()
+		local gmp_available = util.check_gmp()
+		if not gmp_available then
+			util.notify_missing_gmp()
+			return
+		end
+
 		local tools = M.config.tools or {}
 
 		if #tools == 0 then
@@ -71,7 +79,6 @@ function M.setup(opts)
 			if not choice then return end
 			for _, t in ipairs(tools) do
 				if t.label == choice then
-					local util = require("cptools.util")
 					local ok, _ = pcall(function()
 						t.run(choice)
 					end)

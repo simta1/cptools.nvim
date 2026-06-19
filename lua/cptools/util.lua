@@ -1,5 +1,66 @@
 local U = {}
 
+local gmp_checked = false
+local gmp_available = false
+local gmp_error = nil
+local gmp_lib = nil
+
+local gmp_library_names = {
+	"gmp",
+	"libgmp.so.10",
+	"libgmp.so",
+	"libgmp.dylib",
+	"gmp.dll",
+	"libgmp-10.dll",
+}
+
+function U.load_gmp()
+	if gmp_lib then
+		return gmp_lib, nil
+	end
+
+	local ok_ffi, ffi = pcall(require, "ffi")
+	if not ok_ffi then
+		return nil, "LuaJIT FFI is not available"
+	end
+
+	local errors = {}
+	for _, name in ipairs(gmp_library_names) do
+		local ok_load, lib_or_err = pcall(ffi.load, name)
+		if ok_load then
+			gmp_lib = lib_or_err
+			return gmp_lib, nil
+		end
+		table.insert(errors, name .. ": " .. tostring(lib_or_err))
+	end
+
+	return nil, table.concat(errors, "\n")
+end
+
+function U.check_gmp()
+	if gmp_checked then
+		return gmp_available, gmp_error
+	end
+
+	gmp_checked = true
+
+	local lib, err = U.load_gmp()
+	if not lib then
+		gmp_error = err
+		return false, gmp_error
+	end
+
+	gmp_available = true
+	return true, nil
+end
+
+function U.notify_missing_gmp()
+	vim.notify(
+		"cptools.nvim: GMP library not found. Install GMP/libgmp to use CP tools.",
+		vim.log.levels.ERROR
+	)
+end
+
 function U.floating_msg(title, lines)
 	if type(lines) == "string" then
 		lines = vim.split(lines, "\n")

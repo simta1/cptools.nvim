@@ -33,7 +33,10 @@ ffi.cdef[[
 
 	void free(void *ptr);
 ]]
-local gmp = ffi.load("gmp")
+local gmp, gmp_err = util.load_gmp()
+if not gmp then
+	error("cptools.math: GMP library not found: " .. gmp_err)
+end
 
 local function new_mpz(val)
 	local x = ffi.new("mpz_t")
