@@ -133,7 +133,7 @@ function M.highly_composite_leq(n_str)
 		if gmp.__gmpz_cmp(cur, n) <= 0 then
 			lo = mid
 		else
-			hi = mid - 1
+			hi = mid
 		end
 	end
 	return {
